@@ -1,0 +1,6 @@
+{
+  "name": "Meu Pix NFC",
+  "description": "Plataforma SaaS para links de pagamento Pix, QR Codes e páginas customizadas para plaquinhas NFC comerciais.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

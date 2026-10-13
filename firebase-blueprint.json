@@ -1,0 +1,141 @@
+{
+  "entities": {
+    "profile": {
+      "title": "Perfil de Usuário",
+      "description": "Dados do usuário da plataforma Meu Pix NFC",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "name": { "type": "string", "maxLength": 128 },
+        "role": { "type": "string", "enum": ["admin", "merchant"] },
+        "plan_tier": { "type": "string", "enum": ["gratuito", "essencial", "profissional", "empresarial"] },
+        "avatar_url": { "type": "string", "maxLength": 512 },
+        "created_at": { "type": "string" }
+      },
+      "required": ["id", "email", "name", "role", "plan_tier"]
+    },
+    "establishment": {
+      "title": "Estabelecimento Comercial",
+      "description": "Dados cadastrais e visual da loja ou comércio",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "user_id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 128 },
+        "owner_name": { "type": "string", "maxLength": 128 },
+        "document": { "type": "string", "maxLength": 32 },
+        "document_type": { "type": "string", "enum": ["cpf", "cnpj"] },
+        "phone": { "type": "string", "maxLength": 32 },
+        "whatsapp": { "type": "string", "maxLength": 32 },
+        "email": { "type": "string", "maxLength": 256 },
+        "logo_url": { "type": "string", "maxLength": 512 },
+        "primary_pix_key_id": { "type": "string", "maxLength": 128 },
+        "city": { "type": "string", "maxLength": 64 },
+        "address": { "type": "string", "maxLength": 256 },
+        "slug": { "type": "string", "maxLength": 128 },
+        "primary_color": { "type": "string", "maxLength": 16 },
+        "secondary_color": { "type": "string", "maxLength": 16 },
+        "background_image_url": { "type": "string", "maxLength": 512 },
+        "welcome_message": { "type": "string", "maxLength": 256 },
+        "created_at": { "type": "string" },
+        "updated_at": { "type": "string" }
+      },
+      "required": ["id", "user_id", "name", "owner_name", "document", "city", "slug"]
+    },
+    "pix_key": {
+      "title": "Chave Pix",
+      "description": "Chave Pix cadastrada para o estabelecimento",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "establishment_id": { "type": "string", "maxLength": 128 },
+        "key_type": { "type": "string", "enum": ["cpf", "cnpj", "email", "phone", "random"] },
+        "key_value": { "type": "string", "maxLength": 128 },
+        "label": { "type": "string", "maxLength": 128 },
+        "is_active": { "type": "boolean" },
+        "created_at": { "type": "string" }
+      },
+      "required": ["id", "establishment_id", "key_type", "key_value", "is_active"]
+    },
+    "payment_link": {
+      "title": "Link de Pagamento",
+      "description": "Link personalizado para checkout Pix",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "establishment_id": { "type": "string", "maxLength": 128 },
+        "pix_key_id": { "type": "string", "maxLength": 128 },
+        "slug": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 128 },
+        "description": { "type": "string", "maxLength": 256 },
+        "amount": { "type": "number" },
+        "is_active": { "type": "boolean" },
+        "visits_count": { "type": "number" },
+        "txid": { "type": "string", "maxLength": 32 },
+        "created_at": { "type": "string" },
+        "updated_at": { "type": "string" }
+      },
+      "required": ["id", "establishment_id", "pix_key_id", "slug", "title", "is_active"]
+    },
+    "nfc_tag": {
+      "title": "Plaquinha NFC",
+      "description": "Plaquinha física com chip NDEF e link de destino",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "tag_code": { "type": "string", "maxLength": 64 },
+        "establishment_id": { "type": "string", "maxLength": 128 },
+        "payment_link_id": { "type": "string", "maxLength": 128 },
+        "label": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["active", "inactive"] },
+        "taps_count": { "type": "number" },
+        "last_tap_at": { "type": "string" },
+        "created_at": { "type": "string" },
+        "updated_at": { "type": "string" }
+      },
+      "required": ["id", "tag_code", "establishment_id", "payment_link_id", "status"]
+    },
+    "page_visit": {
+      "title": "Registro de Acesso ou Toque NFC",
+      "description": "Métricas de acesso às páginas públicas",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "establishment_id": { "type": "string", "maxLength": 128 },
+        "payment_link_id": { "type": "string", "maxLength": 128 },
+        "nfc_tag_id": { "type": "string", "maxLength": 128 },
+        "source": { "type": "string", "enum": ["direct_link", "nfc_tap", "qr_scan"] },
+        "timestamp": { "type": "string" },
+        "date_str": { "type": "string", "maxLength": 16 }
+      },
+      "required": ["id", "establishment_id", "source", "timestamp", "date_str"]
+    }
+  },
+  "firestore": {
+    "/profiles/{userId}": {
+      "schema": { "$ref": "profile" },
+      "description": "Coleção de perfis de usuários autenticados"
+    },
+    "/establishments/{establishmentId}": {
+      "schema": { "$ref": "establishment" },
+      "description": "Coleção de estabelecimentos comerciais cadastrados"
+    },
+    "/pix_keys/{keyId}": {
+      "schema": { "$ref": "pix_key" },
+      "description": "Chaves Pix dos estabelecimentos"
+    },
+    "/payment_links/{linkId}": {
+      "schema": { "$ref": "payment_link" },
+      "description": "Links de pagamento personalizados para checkouts"
+    },
+    "/nfc_tags/{tagId}": {
+      "schema": { "$ref": "nfc_tag" },
+      "description": "Plaquinhas NFC físicas vinculadas aos estabelecimentos"
+    },
+    "/page_visits/{visitId}": {
+      "schema": { "$ref": "page_visit" },
+      "description": "Histórico de visitas e toques NFC para gráficos e analytics"
+    }
+  }
+}
